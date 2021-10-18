@@ -32,5 +32,5 @@ Route::group([
     Route::post('/make-exchange', [AuthController::class, 'exchange']);  
     Route::get('/get-profile', [AuthController::class, 'getProfile']);  
     Route::get('/search-category', [AuthController::class, 'searchByCat']);  
-
+    Route::get('/get-chats', [AuthController::class, 'getChatsApi']);  
 });

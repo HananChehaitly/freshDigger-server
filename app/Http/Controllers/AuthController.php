@@ -133,12 +133,11 @@ class AuthController extends Controller
         $bus_amounts = DB::table('businesses')
                          ->join('exchanges', 'businesses.id', '=', 'exchanges.business_id');
         $businesses = $bus_amounts->where('name','LIKE' ,"$name")
-                                  ->where('exchanges.created_at', '>' ,$start)
+                                  ->groupBy('exchanges.created_at', '>' ,$start)
                                   ->groupBy('business_id')
                                   ->selectRaw('weekly_limit,picture_url ,name,business_id,sum(amount) as sum')
                                //   ->where('weekly_limit','>','sum')
-                                  ->get();
-            
+                                  ->get();                       
         $response = array();
         foreach($businesses as $business){
              $i =0;
@@ -149,7 +148,7 @@ class AuthController extends Controller
                  $i++;
              }
        }
-        return response()->json($businesses, 200);
+    return response()->json($response, 200);
     }
 
     function exchange(Request  $request){
@@ -179,17 +178,8 @@ class AuthController extends Controller
 
     function searchByCat(Request $request){
         $name =  $request->name."%";
-        // $cat =  Category::where('name','LIKE',$name)->get(); 
-        // $cat_id = $cat[0]['id']; 
         $cat_id =  Category::where('name','LIKE',$name)->first()->id;
         $businesses = Business::select('name', 'email', 'picture_url')->where('category_id','=',$cat_id)->get();
-        // $i=0;
-        // foreach($businesses as $business){
-        //     $response[$i]['name'] =  $business->name;
-        //     $response[$i]['email'] =  $business->email;
-        //     $response[$i]['picture_url'] =  $business->picture_url;
-        //     $i++;
-        // }
         return response()->json($businesses, 200);
     }
 
@@ -206,7 +196,7 @@ class AuthController extends Controller
     }
 
     function editApi(Request $request){  //for business not user.
-        $business_id = auth()->user()->id;
+        $business_id = auth()->user()->id;     //how to make auth on businesses???? just say auth->business???
         $business = Business::find($business_id);
         $business->name = $request->name;
         $business->email = $request->email;
@@ -215,6 +205,17 @@ class AuthController extends Controller
         return response()->json($business, 200);
     }
 
+    function getChatsApi(Request $request){
+        $user_id = auth()->user()->id;
+        $businesses  =  Exchange::distinct()->select('business_id')->where('user_id','=',$user_id)->get();
+        $response=[];
+        foreach($businesses as $business){
+            $business_id =  $business->business_id;
+            $bus =  Business::select('name','picture_url')->where('id','=',$business_id)->first();
+            $response[]=$bus;
+        }
+        return response()->json($response, 200);
+    }
     function rateChart(){
         //for display of last week's changes in rate.
         // rates should be in mysql or firebase?

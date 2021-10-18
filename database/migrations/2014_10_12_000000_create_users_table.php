@@ -38,7 +38,7 @@ class CreateUsersTable extends Migration
             $table->id();
 			$table->integer('user_id');
             $table->integer('business_id');	
-            $table->integer('amount');
+            $table->integer('amount')->default('0');;
             $table->timestamps();
 			$table->softDeletes();
         });
