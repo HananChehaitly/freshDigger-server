@@ -149,9 +149,11 @@ class AuthController extends Controller
        }
      
        $join = Business::join('exchanges', 'businesses.id', '=', 'exchanges.business_id');
-       $businesses = $join->where('name','LIKE' ,"$name")
-                                  ->whereNotIn('name',$response)
-                                  ->get();
+       $businesses = $join->distinct()
+                        ->select('name','picture_url')
+                         ->where('name','LIKE' ,"$name")
+                         ->whereNotIn('name',$response)
+                         ->get();
        return response()->json($businesses, 200);
     }
        
