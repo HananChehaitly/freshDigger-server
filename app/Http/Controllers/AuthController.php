@@ -126,31 +126,6 @@ class AuthController extends Controller
         ]);
     }
 
-    // function searchBusiness(Request $request){
-    //     $name = $request->name."%";
-    //     $date = Carbon::now();
-    //     $start = $date->subDays(2);   //Should change this to 6 later. 
-    //     $bus_amounts = DB::table('businesses')
-    //                      ->join('exchanges', 'businesses.id', '=', 'exchanges.business_id');
-    //     $businesses = $bus_amounts->where('name','LIKE' ,"$name")
-    //                               ->where('exchanges.created_at', '>' ,$start)
-    //                               ->groupBy('business_id')
-    //                               ->selectRaw('weekly_limit,picture_url ,name,business_id,sum(amount) as sum')
-    //                            //   ->where('weekly_limit','>','sum')
-    //                               ->get();                       
-    //     $response = array();
-    //     foreach($businesses as $business){
-    //          $i =0;
-    //          $sum = (int) $business->sum;
-    //          $limit = (int) $business->weekly_limit;
-    //          if( $sum < $limit){
-    //              $response[$i] = $business;
-    //              $i++;
-    //          }
-    //    }
-    // return response()->json($response, 200);
-    // }
-
     function searchBusiness(Request $request){
         $name = $request->name."%";
         $date = Carbon::now();
