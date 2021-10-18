@@ -133,7 +133,7 @@ class AuthController extends Controller
         $bus_amounts = DB::table('businesses')
                          ->join('exchanges', 'businesses.id', '=', 'exchanges.business_id');
         $businesses = $bus_amounts->where('name','LIKE' ,"$name")
-                                  ->groupBy('exchanges.created_at', '>' ,$start)
+                                  ->where('exchanges.created_at', '>' ,$start)
                                   ->groupBy('business_id')
                                   ->selectRaw('weekly_limit,picture_url ,name,business_id,sum(amount) as sum')
                                //   ->where('weekly_limit','>','sum')
@@ -150,6 +150,9 @@ class AuthController extends Controller
        }
     return response()->json($response, 200);
     }
+
+       
+
 
     function exchange(Request  $request){
         $exchange =  new Exchange;
