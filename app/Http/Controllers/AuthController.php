@@ -5,10 +5,11 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Models\User;
+use App\Models\Seller;
 use App\Models\Business;
 use App\Models\Exchange;
 use App\Models\Category;
+use App\Models\User;
 use Validator;
 use Carbon\Carbon;
 
@@ -74,18 +75,38 @@ class AuthController extends Controller
         if($validator->fails()){
             return response()->json($validator->errors()->toJson(), 400);
         }
-		// $time = strtotime($birthday);
-    	// $newformat = date('Y-m-d',$time);
-
-        $user = new User;
-			$user->email = $request->email;
-            $user->password = bcrypt($request->password);
-            $user->save();
-
-        return response()->json([
+		
+        //Register depending on user_type in $request.
+        if($request->user_type_id == 3){
+            $user = new User;
+                $user->email = $request->email;
+                $user->password = bcrypt($request->password);
+                $user->user_type_id =3;
+                $user->save();
+            $user = new Seller;
+			    $user->email = $request->email;
+                $user->password = bcrypt($request->password);
+                $user->save();
+            return response()->json([
             'message' => 'User successfully registered',
             'user' => $user
-        ], 201);
+            ], 201);
+        }
+        if( $request->user_type_id == 2 && auth()->user()->id==1 ){
+            $user = new User;
+                $user->email = $request->email;
+                $user->password = bcrypt($request->password);
+                $user->user_type_id=2;
+                $user->save();
+            $business = new Business;
+			    $business->id = $user->id;
+                $business->name = $request->name;
+                $business->save();
+            return response()->json([
+            'message' => 'Business successfully registered',
+            'user' => $business
+            ], 201);
+        }
     }
     
     /**
@@ -150,7 +171,7 @@ class AuthController extends Controller
      
        $join = Business::join('exchanges', 'businesses.id', '=', 'exchanges.business_id');
        $businesses = $join->distinct()
-                        ->select('name','picture_url')
+                        ->select('business_id','name','picture_url')
                          ->where('name','LIKE' ,"$name")
                          ->whereNotIn('name',$response)
                          ->get();
@@ -175,19 +196,19 @@ class AuthController extends Controller
         $business_id =  $request->id;
         $business = Business::find($business_id);
         $response['name'] =  $business->name;
-        $response['email'] =  $business->email;
         $response['picture_url'] =  $business->picture_url;
         $cat_id =  $business->category_id;
         $category = Category::find($cat_id);
         $response['category'] = $category->name;
+        $email = User::find($business_id)->email;
+        $response['email']= $email;
         return response()->json($response, 200);
     }
     
-
     function searchByCat(Request $request){
         $name =  $request->name."%";
         $cat_id =  Category::where('name','LIKE',$name)->first()->id;
-        $businesses = Business::select('name', 'email', 'picture_url')->where('category_id','=',$cat_id)->get();
+        $businesses = Business::select('id','name', 'email', 'picture_url')->where('category_id','=',$cat_id)->get();
         return response()->json($businesses, 200);
     }
 
@@ -197,19 +218,21 @@ class AuthController extends Controller
         $path=public_path();
         \File::put($path. '/image/' . $imageName, base64_decode($image));
         $user_id = auth()->user()->id;
-        $user = User::find($user_id);
+        $user = Seller::find($user_id);
         $user->p_path = '/image/'.$imageName;
         $user->save();
         return response()->json($user, 200);
     }
 
     function editApi(Request $request){  //for business not user.
-        $business_id = auth()->user()->id;     //how to make auth on businesses???? just say auth->business???
+        $business_id = auth()->user()->id;     
         $business = Business::find($business_id);
         $business->name = $request->name;
+        $business->save();
+        $business = User::find($business_id); 
         $business->email = $request->email;
         $business->password = bcrypt($request->password);  //put condition on confirmation here or frontend?
-        $business->save();
+        $business->save();  
         return response()->json($business, 200);
     }
 

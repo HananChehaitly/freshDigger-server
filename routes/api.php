@@ -27,10 +27,25 @@ Route::group([
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/user-profile', [AuthController::class, 'userProfile']);  
-    Route::get('/user-profile', [AuthController::class, 'userProfile']);  
+});
+
+Route::group([
+    'middleware' => 'api',
+    'middleware' => 'auth.seller'
+
+], function ($router) {
     Route::get('/search-business', [AuthController::class, 'searchBusiness']);  
     Route::post('/make-exchange', [AuthController::class, 'exchange']);  
     Route::get('/get-profile', [AuthController::class, 'getProfile']);  
     Route::get('/search-category', [AuthController::class, 'searchByCat']);  
     Route::get('/get-chats', [AuthController::class, 'getChatsApi']);  
+});
+
+Route::group([
+    'middleware' => 'api',
+    'middleware' => 'auth.business'
+
+], function ($router) {
+    Route::get('/get-chats', [AuthController::class, 'getChatsApi']);  
+    Route::post('/edit',[AuthController::class, 'editApi']);
 });

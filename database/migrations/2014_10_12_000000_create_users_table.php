@@ -17,6 +17,13 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('email')->unique();
             $table->string('password');
+            $table->integer('user_type_id');
+            $table->rememberToken();
+            $table->timestamps();
+        });
+
+        Schema::create('sellers', function (Blueprint $table) {
+            $table->id();
             $table->rememberToken();
             $table->timestamps();
         });
@@ -24,9 +31,6 @@ class CreateUsersTable extends Migration
         Schema::create('businesses', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->string('email')->unique();
-            $table->timestamp('username_verified_at')->nullable();
-            $table->string('password');
             $table->integer('category_id');
             $table->integer('weekly_limit');
             $table->text('picture_url');
