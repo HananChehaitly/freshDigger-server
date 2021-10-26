@@ -24,6 +24,9 @@ class CreateUsersTable extends Migration
 
         Schema::create('sellers', function (Blueprint $table) {
             $table->id();
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->integer('user_type_id');
             $table->rememberToken();
             $table->timestamps();
         });
@@ -42,20 +45,13 @@ class CreateUsersTable extends Migration
             $table->id();
 			$table->integer('user_id');
             $table->integer('business_id');	
-            $table->integer('amount')->default('0');;
+            $table->integer('amount')->default('0');
+            $table->decimal('latitude', 10, 8);
+            $table->decimal('longitude', 11, 8);
             $table->timestamps();
 			$table->softDeletes();
         });
 		
-        Schema::create('business_locations', function (Blueprint $table) {
-            $table->id();
-			$table->integer('business_id');
-            $table->point('longitude'); 	
-            $table->point('latitude');	
-            $table->timestamps();
-			$table->softDeletes();
-        });
-
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
 			$table->string('name');	

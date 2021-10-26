@@ -30,8 +30,8 @@ Route::group([
 });
 
 Route::group([
-    'middleware' => 'api',
-    'middleware' => 'auth.seller'
+      'middleware' => 'api',
+     'middleware' => 'auth.seller'
 
 ], function ($router) {
     Route::get('/search-business', [AuthController::class, 'searchBusiness']);  
@@ -39,6 +39,7 @@ Route::group([
     Route::get('/get-profile', [AuthController::class, 'getProfile']);  
     Route::get('/search-category', [AuthController::class, 'searchByCat']);  
     Route::get('/get-chats', [AuthController::class, 'getChatsApi']);  
+    Route::get('/get-businesses', [AuthController::class, 'getBusinesses']);     
 });
 
 Route::group([

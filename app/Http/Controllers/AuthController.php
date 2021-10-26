@@ -83,10 +83,11 @@ class AuthController extends Controller
                 $user->password = bcrypt($request->password);
                 $user->user_type_id =3;
                 $user->save();
-            $user = new Seller;
-			    $user->email = $request->email;
-                $user->password = bcrypt($request->password);
-                $user->save();
+            $seller = new Seller;
+                $seller->id = $user->id;
+			    $seller->email = $request->email;
+                $seller->password = bcrypt($request->password);
+                $seller->save();
             return response()->json([
             'message' => 'User successfully registered',
             'user' => $user
@@ -101,6 +102,10 @@ class AuthController extends Controller
             $business = new Business;
 			    $business->id = $user->id;
                 $business->name = $request->name;
+                $business->weekly_limit = $request->weekly_limit;
+                $business->latitude = $request ->latitude;
+                $business->longitude = $request ->longitude;
+                // search for category id from the request->category to set the value.
                 $business->save();
             return response()->json([
             'message' => 'Business successfully registered',
@@ -152,33 +157,52 @@ class AuthController extends Controller
         $date = Carbon::now();
         $start = $date->subDays(2);   //Should change this to 6 later. 
         $join = Business::join('exchanges', 'businesses.id', '=', 'exchanges.business_id');
-        $businesses_exceeded = $join->where('exchanges.created_at', '>' ,$start)
+        $businesses = $join->where('exchanges.created_at', '>' ,$start)
                                            ->groupBy('business_id')
-                                           ->selectRaw('weekly_limit,picture_url ,name,business_id,sum(amount) as sum')
-                                           ->get(); 
-                            
-                      
+                                           ->selectRaw('weekly_limit,longitude, latitude ,name,business_id,sum(amount) as sum')
+                                           ->get();              
         $response = array();
         $i =0;
-        foreach($businesses_exceeded as $business){
+        foreach($businesses as $business){
              $sum = (int) $business->sum;
              $limit = (int) $business->weekly_limit;
              if( $sum > $limit){
                  $response[$i]['name'] = $business->name;
                  $i++;
              }
-       }
-     
-       $join = Business::join('exchanges', 'businesses.id', '=', 'exchanges.business_id');
-       $businesses = $join->distinct()
-                        ->select('business_id','name','picture_url')
+        }
+       $businesses = Business::distinct()
+                        ->select('id','name','longitude', 'latitude')
                          ->where('name','LIKE' ,"$name")
                          ->whereNotIn('name',$response)
                          ->get();
        return response()->json($businesses, 200);
     }
        
-
+    function getBusinesses(Request $request){
+        $date = Carbon::now();
+        $start = $date->subDays(2);   //Should change this to 6 later. 
+        $join = Business::join('exchanges', 'businesses.id', '=', 'exchanges.business_id');
+        $businesses = $join->where('exchanges.created_at', '>' ,$start)
+                                           ->groupBy('business_id')
+                                           ->selectRaw('weekly_limit,longitude, latitude ,name,business_id,sum(amount) as sum')
+                                           ->get();              
+        $response = array();
+        $i =0;
+        foreach($businesses as $business){
+             $sum = (int) $business->sum;
+             $limit = (int) $business->weekly_limit;
+             if( $sum > $limit){
+                 $response[$i]['name'] = $business->name;
+                 $i++;
+             }
+        }
+       $businesses = Business::distinct()
+                        ->select('id','name','longitude', 'latitude')
+                         ->whereNotIn('name',$response)
+                         ->get();
+       return response()->json($businesses, 200);   
+    }
 
     function exchange(Request  $request){
         $exchange =  new Exchange;
@@ -205,7 +229,7 @@ class AuthController extends Controller
         return response()->json($response, 200);
     }
     
-    function searchByCat(Request $request){
+    function searchByCat(Request $request){ //need to be changed to not show those which exceeded.
         $name =  $request->name."%";
         $cat_id =  Category::where('name','LIKE',$name)->first()->id;
         $businesses = Business::select('id','name', 'email', 'picture_url')->where('category_id','=',$cat_id)->get();
@@ -250,13 +274,10 @@ class AuthController extends Controller
     function rateChart(){
         //for display of last week's changes in rate.
         // rates should be in mysql or firebase?
-     
     }
 
-    function getMessages(){
-        //firebase
-     
-    }
+    
+
 
     function getNotifications(){
         //firebase

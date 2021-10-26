@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 
-class AuthenticatedAdmin
+class AuthenticatedSeller
 {
 
     public function handle($request, Closure $next) 
