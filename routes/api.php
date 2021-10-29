@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\SellerController; 
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,6 +19,8 @@ use App\Http\Controllers\AuthController;
 //     return $request->user();
 // });
 
+Route::get('/test', [SellerController::class, 'test']);
+
 Route::group([
     'middleware' => 'api',
 
@@ -30,16 +33,20 @@ Route::group([
 });
 
 Route::group([
-      'middleware' => 'api',
-     'middleware' => 'auth.seller'
+     'middleware' => 'api',
+    // 'middleware' => 'auth.seller'
 
 ], function ($router) {
-    Route::get('/search-business', [AuthController::class, 'searchBusiness']);  
+
+    Route::get('/search-businesses', [AuthController::class, 'searchBusinesses']);  
     Route::post('/make-exchange', [AuthController::class, 'exchange']);  
-    Route::get('/get-profile', [AuthController::class, 'getProfile']);  
-    Route::get('/search-category', [AuthController::class, 'searchByCat']);  
+    Route::post('/get-profile', [AuthController::class, 'getProfile']);  
+    Route::post('/search-category', [AuthController::class, 'searchByCat']);  
     Route::get('/get-chats', [AuthController::class, 'getChatsApi']);  
-    Route::get('/get-businesses', [AuthController::class, 'getBusinesses']);     
+    Route::get('/get-businesses', [AuthController::class, 'getBusinesses']);   
+    Route::get('/scrap', [AuthController::class, 'scrap']);
+    Route::get('/draw-chart', [AuthController::class, 'getAvgRates']);
+
 });
 
 Route::group([

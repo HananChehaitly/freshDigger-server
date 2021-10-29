@@ -10,9 +10,10 @@ use App\Models\Business;
 use App\Models\Exchange;
 use App\Models\Category;
 use App\Models\User;
+use App\Models\Rate;
 use Validator;
 use Carbon\Carbon;
-
+use Goutte\Client;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
@@ -46,7 +47,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json($validator->errors(), 422); 
         }
 
         if (! $token = auth()->attempt($validator->validated())) {
@@ -152,7 +153,7 @@ class AuthController extends Controller
         ]);
     }
 
-    function searchBusiness(Request $request){
+    public function searchBusinesses(Request $request){
         $name = $request->name."%";
         $date = Carbon::now();
         $start = $date->subDays(2);   //Should change this to 6 later. 
@@ -207,6 +208,7 @@ class AuthController extends Controller
     function exchange(Request  $request){
         $exchange =  new Exchange;
         $user_id = auth()->user()->id;
+        $exchange->user_id = $user_id;
         $exchange->business_id = $request->business_id;
         $exchange->amount = $request->amount;
         $exchange->created_at = Carbon::now();
@@ -216,19 +218,21 @@ class AuthController extends Controller
         return response()->json($response, 200); //nothing to return..
     }
 
-    function getProfile(Request $request){
+     public function getProfile(Request $request){
         $business_id =  $request->id;
         $business = Business::find($business_id);
         $response['name'] =  $business->name;
-        $response['picture_url'] =  $business->picture_url;
-        $cat_id =  $business->category_id;
-        $category = Category::find($cat_id);
-        $response['category'] = $category->name;
-        $email = User::find($business_id)->email;
-        $response['email']= $email;
+        //$response['picture_url'] =  $business->picture_url;
+        //$cat_id =  $business->category_id;
+        //$category = Category::find($cat_id);
+        //$response['category'] = $category->name;
+        $response['bio']= $business->bio;
+        // $email = User::find($business_id)->email;
+        // $response['email']= $email;
         return response()->json($response, 200);
     }
-    
+
+   
     function searchByCat(Request $request){ //need to be changed to not show those which exceeded.
         $name =  $request->name."%";
         $cat_id =  Category::where('name','LIKE',$name)->first()->id;
@@ -271,17 +275,46 @@ class AuthController extends Controller
         }
         return response()->json($response, 200);
     }
-    function rateChart(){
-        //for display of last week's changes in rate.
-        // rates should be in mysql or firebase?
+    
+    function getAvgRates(){
+        $date = Carbon::now();
+        $start = $date->subDays(5);
+        $timestamp = strtotime($start);
+        $days=  array();
+        for($i=0; $i<6 ; $i++){
+            $days[$i]= date('D', $timestamp);
+            $day = $start->addDay();
+            $timestamp= strtotime($day);
+        }
+        $avgs = Rate::groupBy("day")
+                    ->selectRaw('day, cast(avg(rate) as decimal(10,3)) ')
+                    ->orderBy('day', 'desc')
+                    ->take(6)
+                    ->get();              
+
+        $response["days"]=$days;
+        $response["avgs"]=$avgs;
+        return response()->json($response, 200);
+
     }
 
+    function scrap(){
+        $results  = array();
+        $client =  new Client();
+        $url ='https://www.omt.com.lb/en';
+        $page = $client->request('GET', $url);
+       $exchange = $page->filter('.rate')->text() ;
+       $rate = explode(' ',$exchange);
+
+       $value = new Rate;
+       $value->rate = floatval($rate[3]);     // This is rounding ! NEED TO CHANGE.
+       $value->day = strtotime(Carbon::now());
+       $value->save();
+       return response()->json(($rate[3]),200);
+    }
     
-
-
     function getNotifications(){
-        //firebase
-     
+        //firebase 
     }
 
     function getMap(){

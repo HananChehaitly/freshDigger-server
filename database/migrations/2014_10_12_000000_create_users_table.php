@@ -34,6 +34,7 @@ class CreateUsersTable extends Migration
         Schema::create('businesses', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
+            $table->string('bio');        
             $table->integer('category_id');
             $table->integer('weekly_limit');
             $table->text('picture_url');
@@ -61,7 +62,7 @@ class CreateUsersTable extends Migration
 
         Schema::create('rates', function (Blueprint $table) {
             $table->id();
-			$table->date('date');
+			$table->date('day');
             $table->float('rate'); 		
             $table->timestamps();
 			$table->softDeletes();
