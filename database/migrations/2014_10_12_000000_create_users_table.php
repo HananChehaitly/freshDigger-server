@@ -37,7 +37,10 @@ class CreateUsersTable extends Migration
             $table->string('bio');        
             $table->integer('category_id');
             $table->integer('weekly_limit');
+            $table->string('latitude');        
+            $table->string('longitude');        
             $table->text('picture_url');
+            $table->string('phone_number');  
             $table->rememberToken();
             $table->timestamps();
         });
@@ -47,8 +50,6 @@ class CreateUsersTable extends Migration
 			$table->integer('user_id');
             $table->integer('business_id');	
             $table->integer('amount')->default('0');
-            $table->decimal('latitude', 10, 8);
-            $table->decimal('longitude', 11, 8);
             $table->timestamps();
 			$table->softDeletes();
         });
@@ -63,7 +64,7 @@ class CreateUsersTable extends Migration
         Schema::create('rates', function (Blueprint $table) {
             $table->id();
 			$table->date('day');
-            $table->float('rate'); 		
+            $table->double('rate',7,5); 		
             $table->timestamps();
 			$table->softDeletes();
         });

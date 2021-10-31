@@ -104,6 +104,7 @@ class AuthController extends Controller
 			    $business->id = $user->id;
                 $business->name = $request->name;
                 $business->weekly_limit = $request->weekly_limit;
+                $business->phone_number = $request-> phone_number;
                 $business->latitude = $request ->latitude;
                 $business->longitude = $request ->longitude;
                 // search for category id from the request->category to set the value.
@@ -227,8 +228,8 @@ class AuthController extends Controller
         //$category = Category::find($cat_id);
         //$response['category'] = $category->name;
         $response['bio']= $business->bio;
-        // $email = User::find($business_id)->email;
-        // $response['email']= $email;
+         $email = User::find($business_id)->email;
+         $response['email']= $email;
         return response()->json($response, 200);
     }
 
@@ -306,11 +307,12 @@ class AuthController extends Controller
        $exchange = $page->filter('.rate')->text() ;
        $rate = explode(' ',$exchange);
 
+       $a=str_replace(',','.',$rate[3]);
        $value = new Rate;
-       $value->rate = floatval($rate[3]);     // This is rounding ! NEED TO CHANGE.
+       $value->rate = floatval($a);     
        $value->day = strtotime(Carbon::now());
        $value->save();
-       return response()->json(($rate[3]),200);
+       return response()->json(floatval($a),200);
     }
     
     function getNotifications(){
