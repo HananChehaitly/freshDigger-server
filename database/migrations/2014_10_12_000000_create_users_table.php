@@ -64,7 +64,7 @@ class CreateUsersTable extends Migration
         Schema::create('rates', function (Blueprint $table) {
             $table->id();
 			$table->date('day');
-            $table->double('rate',7,5); 		
+            $table->double('rate',7,0); 		
             $table->timestamps();
 			$table->softDeletes();
         });

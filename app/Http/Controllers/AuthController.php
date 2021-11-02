@@ -307,23 +307,17 @@ class AuthController extends Controller
        $exchange = $page->filter('.rate')->text() ;
        $rate = explode(' ',$exchange);
 
-       $a=str_replace(',','.',$rate[3]);
+       $a=str_replace(',','',$rate[3]);
        $value = new Rate;
-       $value->rate = floatval($a);     
-       $value->day = strtotime(Carbon::now());
+       $value->rate = (int)($a);     
+       $value->day = Carbon::now();
        $value->save();
-       return response()->json(floatval($a),200);
+       return response()->json((int)($a),200);
     }
     
     function getNotifications(){
-        //firebase 
+         
     }
 
-    function getMap(){
-        //firebase
-     
-    }
-
-    
 
 }
