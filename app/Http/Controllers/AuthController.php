@@ -77,11 +77,12 @@ class AuthController extends Controller
 		
         //Register depending on user_type in $request.
         
-        if( $auth()->user()->id==1 ){
+        if( auth()->user()->id==1 ){
             $user = new User;
                 $user->email = $request->email;
                 $user->password = bcrypt($request->password);
                 $user->user_type_id=2;
+                $user->expoToken = $request->expoToken;
                 $user->save();
             $business = new Business;
 			    $business->id = $user->id;
@@ -97,7 +98,7 @@ class AuthController extends Controller
             'user' => $business
             ], 201);
         }
-
+else{
         $user = new User;
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
@@ -107,7 +108,7 @@ class AuthController extends Controller
         'message' => 'User successfully registered',
         'user' => $user
         ], 201);
-
+}
     }
     
     /**
@@ -218,12 +219,11 @@ class AuthController extends Controller
         $business = Business::find($business_id);
         $response['name'] =  $business->name;
         $response['picture_url'] =  $business->picture_url;
-        //$cat_id =  $business->category_id;
-        //$category = Category::find($cat_id);
-        //$response['category'] = $category->name;
+    
         $response['bio']= $business->bio;
          $email = User::find($business_id)->email;
          $response['email']= $email;
+         $response['expoToken']= User::find($business_id)->expoToken;
         return response()->json($response, 200);
     }
 
