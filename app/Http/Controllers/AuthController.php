@@ -5,7 +5,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Models\Seller;
 use App\Models\Business;
 use App\Models\Exchange;
 use App\Models\Category;
@@ -57,7 +56,6 @@ class AuthController extends Controller
         return $this->createNewToken($token);
     }
 
-
     /**
      * Get the authenticated User.
      *
@@ -78,23 +76,8 @@ class AuthController extends Controller
         }
 		
         //Register depending on user_type in $request.
-        if($request->user_type_id == 3){
-            $user = new User;
-                $user->email = $request->email;
-                $user->password = bcrypt($request->password);
-                $user->user_type_id =3;
-                $user->save();
-            $seller = new Seller;
-                $seller->id = $user->id;
-			    $seller->email = $request->email;
-                $seller->password = bcrypt($request->password);
-                $seller->save();
-            return response()->json([
-            'message' => 'User successfully registered',
-            'user' => $user
-            ], 201);
-        }
-        if( $request->user_type_id == 2 && auth()->user()->id==1 ){
+        
+        if( $auth()->user()->id==1 ){
             $user = new User;
                 $user->email = $request->email;
                 $user->password = bcrypt($request->password);
@@ -114,6 +97,17 @@ class AuthController extends Controller
             'user' => $business
             ], 201);
         }
+
+        $user = new User;
+        $user->email = $request->email;
+        $user->password = bcrypt($request->password);
+        $user->user_type_id =3;
+        $user->save();
+        return response()->json([
+        'message' => 'User successfully registered',
+        'user' => $user
+        ], 201);
+
     }
     
     /**
@@ -155,7 +149,7 @@ class AuthController extends Controller
     }
 
     public function searchBusinesses(Request $request){
-        $name = $request->name."%";
+        $name = "%".($request->name)."%";
         $date = Carbon::now();
         $start = $date->subDays(2);   //Should change this to 6 later. 
         $join = Business::join('exchanges', 'businesses.id', '=', 'exchanges.business_id');
@@ -223,7 +217,7 @@ class AuthController extends Controller
         $business_id =  $request->id;
         $business = Business::find($business_id);
         $response['name'] =  $business->name;
-        //$response['picture_url'] =  $business->picture_url;
+        $response['picture_url'] =  $business->picture_url;
         //$cat_id =  $business->category_id;
         //$category = Category::find($cat_id);
         //$response['category'] = $category->name;
@@ -247,10 +241,10 @@ class AuthController extends Controller
         $path=public_path();
         \File::put($path. '/image/' . $imageName, base64_decode($image));
         $user_id = auth()->user()->id;
-        $user = Seller::find($user_id);
-        $user->p_path = '/image/'.$imageName;
+        $user = Business::find($user_id);
+        $user->picture_url = '/image/'.$imageName;
         $user->save();
-        return response()->json($user, 200);
+        return response()->json('hi', 200);
     }
 
     function editApi(Request $request){  //for business not user.

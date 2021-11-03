@@ -22,14 +22,6 @@ class CreateUsersTable extends Migration
             $table->timestamps();
         });
 
-        Schema::create('sellers', function (Blueprint $table) {
-            $table->id();
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->integer('user_type_id');
-            $table->rememberToken();
-            $table->timestamps();
-        });
 
         Schema::create('businesses', function (Blueprint $table) {
             $table->id();
@@ -38,7 +30,8 @@ class CreateUsersTable extends Migration
             $table->integer('category_id');
             $table->integer('weekly_limit');
             $table->string('latitude');        
-            $table->string('longitude');        
+            $table->string('longitude');   
+            $table->string('Area');   
             $table->text('picture_url');
             $table->string('phone_number');  
             $table->rememberToken();
@@ -54,9 +47,10 @@ class CreateUsersTable extends Migration
 			$table->softDeletes();
         });
 		
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-			$table->string('name');	
+			$table->integer('sender_id');
+            $table->integer('receiver_id');	
             $table->timestamps();
 			$table->softDeletes();
         });

@@ -37,8 +37,8 @@ Route::group([
     // 'middleware' => 'auth.seller'
 
 ], function ($router) {
-
-    Route::get('/search-businesses', [AuthController::class, 'searchBusinesses']);  
+    Route::post('/add-picture', [AuthController::class, 'addPicture']);  
+    Route::post('/search-businesses', [AuthController::class, 'searchBusinesses']);  
     Route::post('/make-exchange', [AuthController::class, 'exchange']);  
     Route::post('/get-profile', [AuthController::class, 'getProfile']);  
     Route::post('/search-category', [AuthController::class, 'searchByCat']);  
