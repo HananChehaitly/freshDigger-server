@@ -7,9 +7,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Business;
 use App\Models\Exchange;
-use App\Models\Category;
+use App\Models\Notification;
 use App\Models\User;
 use App\Models\Rate;
+
 use Validator;
 use Carbon\Carbon;
 use Goutte\Client;
@@ -77,7 +78,7 @@ class AuthController extends Controller
 		
         //Register depending on user_type in $request.
         
-        if( auth()->user()->id==1 ){
+        if( $request->user_type_id==2 && auth()->user()->id==1 ){
             $user = new User;
                 $user->email = $request->email;
                 $user->password = bcrypt($request->password);
@@ -98,11 +99,12 @@ class AuthController extends Controller
             'user' => $business
             ], 201);
         }
-else{
+    else{
         $user = new User;
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
         $user->user_type_id =3;
+        $user->expoToken = $request->expoToken;
         $user->save();
         return response()->json([
         'message' => 'User successfully registered',
@@ -309,9 +311,36 @@ else{
        return response()->json((int)($a),200);
     }
     
-    function getNotifications(){
-         
+    function sendNotification(Request $request){
+        $notifcation =  new Notification;
+        $sender_id = auth()->user()->id;
+        $notifcation->sender_id = $sender_id;
+        $notifcation->receiver_id = $request->receiver_id;
+        $notifcation->body = $request->body;
+        $notifcation->created_at = Carbon::now();
+        $notifcation->save();
+        
+        $response="OK";
+        return response()->json($response, 200); //nothing to return..
     }
 
+    function getNotifications(){
+        $receiver_id = auth()->user()->id;
+        $response = Notification::where('receiver_id','=',$receiver_id)
+                                ->select('sender_id','body')
+                                ->get();
+        return response()->json($response, 200); 
+
+    }
+
+    function getSellerNotifications(){
+        $receiver_id = auth()->user()->id;
+        $join = Business::join('notifications', 'businesses.id', '=', 'notifications.sender_id');
+        $response = $join->where('receiver_id','=',$receiver_id)
+                                ->select('name','body','picture_url')
+                                ->get();
+        return response()->json($response, 200); 
+
+    }
 
 }

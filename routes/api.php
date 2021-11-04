@@ -46,6 +46,9 @@ Route::group([
     Route::get('/get-businesses', [AuthController::class, 'getBusinesses']);   
     Route::get('/scrap', [AuthController::class, 'scrap']);
     Route::get('/draw-chart', [AuthController::class, 'getAvgRates']);
+    Route::post('/send-notification', [AuthController::class, 'sendNotification']);
+    Route::get('/get-notifications', [AuthController::class, 'getNotifications']);
+    Route::get('/get-Sellernotifications', [AuthController::class, 'getSellerNotifications']);
 
 });
 
