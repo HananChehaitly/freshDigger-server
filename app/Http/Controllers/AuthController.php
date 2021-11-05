@@ -337,10 +337,24 @@ class AuthController extends Controller
         $receiver_id = auth()->user()->id;
         $join = Business::join('notifications', 'businesses.id', '=', 'notifications.sender_id');
         $response = $join->where('receiver_id','=',$receiver_id)
-                                ->select('name','body','picture_url')
+                                ->select('name','body','picture_url','sender_id')
                                 ->get();
         return response()->json($response, 200); 
 
     }
 
+    function deleteNotification(Request $request){
+        $receiver_id = auth()->user()->id;
+        $sender_id = $request->sender_id;
+        $res = Notification::where('receiver_id','=',$receiver_id)
+                            ->where('sender_id','=',$sender_id)
+                            ->delete();
+    }
+    function getToken(Request $request){
+        $id = $request->id;
+        $response = User::where('id','=',$id)->get();
+        
+        return response()->json($response[0], 200); 
+
+    }
 }
