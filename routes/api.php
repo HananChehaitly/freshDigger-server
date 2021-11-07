@@ -51,6 +51,9 @@ Route::group([
     Route::get('/get-Sellernotifications', [AuthController::class, 'getSellerNotifications']);
     Route::post('/delete-notification', [AuthController::class, 'deleteNotification']);
     Route::post('/get-token', [AuthController::class, 'getToken']);
+    Route::post('/remaining-allowance', [AuthController::class, 'remainingAllowance']);
+    Route::get('/remaining-allowances', [AuthController::class, 'remainingAllowances']);
+    Route::post('/filter', [AuthController::class, 'filter']);
 
 });
 

@@ -178,7 +178,7 @@ class AuthController extends Controller
        return response()->json($businesses, 200);
     }
        
-    function getBusinesses(Request $request){
+    function getBusinesses(){
         $date = Carbon::now();
         $start = $date->subDays(2);   //Should change this to 6 later. 
         $join = Business::join('exchanges', 'businesses.id', '=', 'exchanges.business_id');
@@ -340,7 +340,6 @@ class AuthController extends Controller
                                 ->select('name','body','picture_url','sender_id')
                                 ->get();
         return response()->json($response, 200); 
-
     }
 
     function deleteNotification(Request $request){
@@ -350,11 +349,80 @@ class AuthController extends Controller
                             ->where('sender_id','=',$sender_id)
                             ->delete();
     }
+
     function getToken(Request $request){
         $id = $request->id;
         $response = User::where('id','=',$id)->get();
         
         return response()->json($response[0], 200); 
+    }
 
+    function remainingAllowance(Request $request){
+            $id = $request->id;
+            $date = Carbon::now();
+            $start = $date->subDays(2);   //Should change this to 6 later. 
+            $join = Business::join('exchanges', 'businesses.id', '=', 'exchanges.business_id');
+            $business = $join->where('exchanges.created_at', '>' ,$start)
+                                ->where('business_id','=',$id)
+                                ->groupBy('business_id')
+                                ->selectRaw('weekly_limit,longitude, latitude ,name,business_id,sum(amount) as sum')
+                                ->get();    
+            if($business->isEmpty()){
+                $allowance = Business::find($id);
+                return response()->json($allowance['weekly_limit'], 200);
+            }  
+            else{
+                $sum = (int) $business[0]->sum;
+                $limit = (int) $business[0]->weekly_limit;
+
+        return response()->json($limit-$sum, 200);
+
+            }
+
+    return response()->json($business, 200);   
+    
+    }
+    
+    function RemainingAllowances(){
+        $date = Carbon::now();
+        $start = $date->subDays(2);   //Should change this to 6 later. 
+        $join = Business::join('exchanges', 'businesses.id', '=', 'exchanges.business_id');
+        $businesses_exchanged = $join->where('exchanges.created_at', '>' ,$start)
+                                    ->groupBy('business_id')
+                                    ->selectRaw('weekly_limit,longitude, latitude ,name,business_id,sum(amount) as sum, (weekly_limit-sum(amount)) as allowance')
+                                    ->get();   
+     $response = array();
+     $i=0;
+    foreach($businesses_exchanged as $business){
+        $allowance = $business->allowance;
+        if( $allowance > 0){
+            $response[$i]= $business;
+            $i++;
+        }
+    }
+            
+    return response()->json($response, 200);   
+    }
+
+    function filter(Request $request){
+        $amount = $request->amount;
+        $date = Carbon::now();
+        $start = $date->subDays(2);   //Should change this to 6 later. 
+        $join = Business::join('exchanges', 'businesses.id', '=', 'exchanges.business_id');
+        $businesses_exchanged = $join->where('exchanges.created_at', '>' ,$start)
+                                    ->groupBy('business_id')
+                                    ->selectRaw('weekly_limit,longitude, latitude ,name,business_id,sum(amount) as sum, (weekly_limit-sum(amount)) as allowance')
+                                    ->get();   
+        $response = array();
+        $i=0;
+        foreach($businesses_exchanged as $business){
+            $allowance = $business->allowance;
+            if( $allowance > $amount){
+                $response[$i]= $business;
+                $i++;
+            }
+        }
+
+    return response()->json($response, 200);   
     }
 }
