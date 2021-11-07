@@ -389,19 +389,34 @@ class AuthController extends Controller
         $join = Business::join('exchanges', 'businesses.id', '=', 'exchanges.business_id');
         $businesses_exchanged = $join->where('exchanges.created_at', '>' ,$start)
                                     ->groupBy('business_id')
-                                    ->selectRaw('weekly_limit,longitude, latitude ,name,business_id,sum(amount) as sum, (weekly_limit-sum(amount)) as allowance')
+                                    ->selectRaw('weekly_limit,longitude, latitude ,name,business_id as id,sum(amount) as sum, (weekly_limit-sum(amount)) as allowance')
                                     ->get();   
-     $response = array();
-     $i=0;
-    foreach($businesses_exchanged as $business){
-        $allowance = $business->allowance;
-        if( $allowance > 0){
-            $response[$i]= $business;
-            $i++;
-        }
-    }
+        $response = array();
+        $exceeded = array();
+        $i=0;
+        $j=0;
+        foreach($businesses_exchanged as $business){
+            $allowance = $business->allowance;
+            if( $allowance > 0){
+                $response[$i]= $business;
+                $i++;
+            }
+            else {
+                $exceeded[$j]['name'] = $business->name; 
+            }
+        }  
+        $businesses = Business::distinct()
+                        ->select('id','weekly_limit','name','longitude', 'latitude')
+                         ->whereNotIn('name',$exceeded)
+                         ->whereNotIn('name',$response)
+                         ->get();               
+        foreach($businesses as $business){
+            $response[$i]=$business;
+            $response[$i]['allowance'] = $business->weekly_limit;
             
-    return response()->json($response, 200);   
+        }
+        
+        return response()->json($response, 200);   
     }
 
     function filter(Request $request){
@@ -411,18 +426,38 @@ class AuthController extends Controller
         $join = Business::join('exchanges', 'businesses.id', '=', 'exchanges.business_id');
         $businesses_exchanged = $join->where('exchanges.created_at', '>' ,$start)
                                     ->groupBy('business_id')
-                                    ->selectRaw('weekly_limit,longitude, latitude ,name,business_id,sum(amount) as sum, (weekly_limit-sum(amount)) as allowance')
+                                    ->selectRaw('weekly_limit,longitude, latitude ,name,business_id as id,sum(amount) as sum, (weekly_limit-sum(amount)) as allowance')
                                     ->get();   
         $response = array();
+        $exceeded = array();
+        $ids = array();
         $i=0;
+        $j=0;
         foreach($businesses_exchanged as $business){
             $allowance = $business->allowance;
             if( $allowance > $amount){
+                $ids[]= $business->id;
                 $response[$i]= $business;
                 $i++;
             }
+            else {
+                $exceeded[$j]['name'] = $business->name; 
+            }
         }
 
+        $businesses = Business::distinct()
+                        ->select('id','weekly_limit','name','longitude', 'latitude')
+                         ->whereNotIn('name',$exceeded)
+                         ->whereNotIn('id',$ids)
+                        ->get(); 
+
+        foreach($businesses as $business){
+            $limit =$business->weekly_limit; 
+            if($limit>$amount){
+                $response[$i]=$business;
+                $response[$i]['allowance'] = $business->weekly_limit;
+            }
+        }
     return response()->json($response, 200);   
     }
 }
