@@ -154,7 +154,8 @@ class AuthController extends Controller
     public function searchBusinesses(Request $request){
         $name = "%".($request->name)."%";
         $date = Carbon::now();
-        $start = $date->subDays(2);   //Should change this to 6 later. 
+        
+        $start = $date->subDays(2);   
         $join = Business::join('exchanges', 'businesses.id', '=', 'exchanges.business_id');
         $businesses = $join->where('exchanges.created_at', '>' ,$start)
                                            ->groupBy('business_id')
@@ -180,7 +181,10 @@ class AuthController extends Controller
        
     function getBusinesses(){
         $date = Carbon::now();
-        $start = $date->subDays(2);   //Should change this to 6 later. 
+        $first = Business::where('id',$id)->select('created_at')->get();
+        $first_day = $first[0]['created_at'];
+        $floor=$first_day->diff($date)->days%7;
+        $start = $date->subDays($floor);  
         $join = Business::join('exchanges', 'businesses.id', '=', 'exchanges.business_id');
         $businesses = $join->where('exchanges.created_at', '>' ,$start)
                                            ->groupBy('business_id')
@@ -337,9 +341,18 @@ class AuthController extends Controller
         $receiver_id = auth()->user()->id;
         $join = Business::join('notifications', 'businesses.id', '=', 'notifications.sender_id');
         $response = $join->where('receiver_id','=',$receiver_id)
-                                ->select('name','body','picture_url','sender_id')
-                                ->get();
-        return response()->json($response, 200); 
+                            ->select('name','body','picture_url','sender_id')
+                            ->orderBy('body','DESC')
+                            ->get();
+
+        $join = Business::join('notifications', 'businesses.id', '=', 'notifications.receiver_id');
+                  
+        $rest= $join ->Where(function ($query) use ($receiver_id) {
+                                $query->where('sender_id', '=', $receiver_id)
+                                      ->where('body', 'LIKE', '%pinged%');
+                                })->get();
+        return response()->json($rest, 200); 
+
     }
 
     function deleteNotification(Request $request){
@@ -360,7 +373,10 @@ class AuthController extends Controller
     function remainingAllowance(Request $request){
             $id = $request->id;
             $date = Carbon::now();
-            $start = $date->subDays(2);   //Should change this to 6 later. 
+            $first = Business::where('id',$id)->select('created_at')->get();
+            $first_day = $first[0]['created_at'];
+            $floor=$first_day->diff($date)->days%7;
+            $start = $date->subDays($floor);
             $join = Business::join('exchanges', 'businesses.id', '=', 'exchanges.business_id');
             $business = $join->where('exchanges.created_at', '>' ,$start)
                                 ->where('business_id','=',$id)
@@ -377,7 +393,7 @@ class AuthController extends Controller
 
         return response()->json($limit-$sum, 200);
 
-            }
+           }
 
     return response()->json($business, 200);   
     
@@ -385,7 +401,10 @@ class AuthController extends Controller
     
     function RemainingAllowances(){
         $date = Carbon::now();
-        $start = $date->subDays(2);   //Should change this to 6 later. 
+        $first = Business::where('id',$id)->select('created_at')->get();
+        $first_day = $first[0]['created_at'];
+        $floor=$first_day->diff($date)->days%7;
+        $start = $date->subDays($floor);    
         $join = Business::join('exchanges', 'businesses.id', '=', 'exchanges.business_id');
         $businesses_exchanged = $join->where('exchanges.created_at', '>' ,$start)
                                     ->groupBy('business_id')
@@ -393,11 +412,13 @@ class AuthController extends Controller
                                     ->get();   
         $response = array();
         $exceeded = array();
+        $ids = array();
         $i=0;
         $j=0;
         foreach($businesses_exchanged as $business){
             $allowance = $business->allowance;
             if( $allowance > 0){
+                $ids[]= $business->id;
                 $response[$i]= $business;
                 $i++;
             }
@@ -408,21 +429,23 @@ class AuthController extends Controller
         $businesses = Business::distinct()
                         ->select('id','weekly_limit','name','longitude', 'latitude')
                          ->whereNotIn('name',$exceeded)
-                         ->whereNotIn('name',$response)
+                         ->whereNotIn('id',$ids)
                          ->get();               
         foreach($businesses as $business){
             $response[$i]=$business;
-            $response[$i]['allowance'] = $business->weekly_limit;
-            
-        }
-        
+            $response[$i]['allowance'] = $business->weekly_limit;   
+            $i++; 
+        }        
         return response()->json($response, 200);   
     }
 
     function filter(Request $request){
         $amount = $request->amount;
         $date = Carbon::now();
-        $start = $date->subDays(2);   //Should change this to 6 later. 
+        $first = Business::where('id',$id)->select('created_at')->get();
+        $first_day = $first[0]['created_at'];
+        $floor=$first_day->diff($date)->days%7;
+        $start = $date->subDays($floor);   
         $join = Business::join('exchanges', 'businesses.id', '=', 'exchanges.business_id');
         $businesses_exchanged = $join->where('exchanges.created_at', '>' ,$start)
                                     ->groupBy('business_id')
@@ -456,8 +479,12 @@ class AuthController extends Controller
             if($limit>$amount){
                 $response[$i]=$business;
                 $response[$i]['allowance'] = $business->weekly_limit;
+                $i++;
             }
         }
-    return response()->json($response, 200);   
+    return response()->json($response, 200);  
+
     }
+
+
 }

@@ -54,6 +54,7 @@ Route::group([
     Route::post('/remaining-allowance', [AuthController::class, 'remainingAllowance']);
     Route::get('/remaining-allowances', [AuthController::class, 'remainingAllowances']);
     Route::post('/filter', [AuthController::class, 'filter']);
+    Route::post('/get-date', [AuthController::class, 'getDate']);
 
 });
 

@@ -135,61 +135,61 @@ class DatabaseSeeder extends Seeder
         
         DB::table("rates")->insert([
             "rate" =>"20600",
-            "day" =>date("2021-11-04"),
+            "day" =>date("2021-11-06"),
 			"created_at" => date("Y-m-d"),
 			"updated_at" => date("Y-m-d")
 		]);
         DB::table("rates")->insert([
             "rate" =>"20550",
-            "day" =>date("2021-11-03"),
+            "day" =>date("2021-11-05"),
 			"created_at" => date("Y-m-d"),
 			"updated_at" => date("Y-m-d")
 		]);
         DB::table("rates")->insert([
             "rate" =>"20100",
-            "day" =>date("2021-11-03"),
+            "day" =>date("2021-11-04"),
 			"created_at" => date("Y-m-d"),
 			"updated_at" => date("Y-m-d")
 		]);
         DB::table("rates")->insert([
             "rate" =>"20200",
-            "day" =>date("2021-11-02"),
+            "day" =>date("2021-11-04"),
 			"created_at" => date("Y-m-d"),
 			"updated_at" => date("Y-m-d")
 		]);
         DB::table("rates")->insert([
             "rate" =>"20250",
-            "day" =>date("2021-11-01"),
+            "day" =>date("2021-11-03"),
 			"created_at" => date("Y-m-d"),
 			"updated_at" => date("Y-m-d")
 		]);
         DB::table("rates")->insert([
             "rate" =>"20300",
-            "day" =>date("2021-10-30"),
+            "day" =>date("2021-10-03"),
 			"created_at" => date("Y-m-d"),
 			"updated_at" => date("Y-m-d")
 		]);
         DB::table("rates")->insert([
             "rate" =>"20350",
-            "day" =>date("2021-10-30"),
+            "day" =>date("2021-10-03"),
 			"created_at" => date("Y-m-d"),
 			"updated_at" => date("Y-m-d")
 		]);
         DB::table("rates")->insert([
             "rate" =>"20400",
-            "day" =>date("2021-10-29"),
+            "day" =>date("2021-10-02"),
 			"created_at" => date("Y-m-d"),
 			"updated_at" => date("Y-m-d")
 		]);
         DB::table("rates")->insert([
             "rate" =>"20300",
-            "day" =>date("2021-10-29"),
+            "day" =>date("2021-10-02"),
 			"created_at" => date("Y-m-d"),
 			"updated_at" => date("Y-m-d")
 		]);
         DB::table("rates")->insert([
             "rate" =>"20200",
-            "day" =>date("2021-10-28"),
+            "day" =>date("2021-10-02"),
 			"created_at" => date("Y-m-d"),
 			"updated_at" => date("Y-m-d")
 		]);
