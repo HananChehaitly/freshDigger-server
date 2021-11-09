@@ -51,10 +51,13 @@ Route::group([
     Route::get('/get-Sellernotifications', [AuthController::class, 'getSellerNotifications']);
     Route::post('/delete-notification', [AuthController::class, 'deleteNotification']);
     Route::post('/get-token', [AuthController::class, 'getToken']);
-    Route::post('/remaining-allowance', [AuthController::class, 'remainingAllowance']);
+    Route::get('/remaining-allowance', [AuthController::class, 'remainingAllowance']);
     Route::get('/remaining-allowances', [AuthController::class, 'remainingAllowances']);
     Route::post('/filter', [AuthController::class, 'filter']);
-    Route::post('/get-date', [AuthController::class, 'getDate']);
+    Route::post('/get-Returndate', [AuthController::class, 'returnDate']);
+    Route::get('/daily-sums', [AuthController::class, 'dailySums']);
+    Route::get('/return-date', [AuthController::class, 'returnDate']);
+    Route::post('/get-remainingAllowance', [AuthController::class, 'getRemainingAllowance']);
 
 });
 
