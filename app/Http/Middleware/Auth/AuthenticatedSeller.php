@@ -14,7 +14,7 @@ class AuthenticatedSeller
     public function handle($request, Closure $next) 
     {
         $user = auth()->user()->user_type_id;
-        if($user != 3 && $user != 1){
+        if($user != 3){
             $response['access'] = "denied";
             return response()->json([$response], 403);
         }

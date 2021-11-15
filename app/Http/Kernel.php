@@ -38,27 +38,27 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
-
         'api' => [
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
-
     /**
+     * 
      * The application's route middleware.
-     *
+     *  
      * These middleware may be assigned to groups or used individually.
      *
      * @var array
+     * 
      */
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'auth.seller' => \App\Http\Middleware\Auth\AuthenticatedSeller::class,
         'auth.admin' => \App\Http\Middleware\Auth\AuthenticatedAdmin::class,
-        'auth.business' => \App\Http\Middleware\Auth\AuthenticatedBusiness::class,
+        'auth.buyer' => \App\Http\Middleware\Auth\AuthenticatedBuyer::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,

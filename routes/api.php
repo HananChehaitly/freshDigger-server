@@ -2,8 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Auth\SellerController; 
+use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\sellerController; 
+use App\Http\Controllers\API\buyerController; 
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -34,38 +35,36 @@ Route::group([
 
 Route::group([
      'middleware' => 'api',
-    // 'middleware' => 'auth.seller'
+     'middleware' => 'auth.seller'
 
 ], function ($router) {
-    Route::post('/add-picture', [AuthController::class, 'addPicture']);  
-    Route::post('/search-businesses', [AuthController::class, 'searchBusinesses']);  
-    Route::post('/make-exchange', [AuthController::class, 'exchange']);  
-    Route::post('/get-profile', [AuthController::class, 'getProfile']);  
-    Route::post('/search-category', [AuthController::class, 'searchByCat']);  
-    Route::get('/get-chats', [AuthController::class, 'getChatsApi']);  
-    Route::get('/get-businesses', [AuthController::class, 'getBusinesses']);   
-    Route::get('/scrap', [AuthController::class, 'scrap']);
-    Route::get('/draw-chart', [AuthController::class, 'getAvgRates']);
-    Route::post('/send-notification', [AuthController::class, 'sendNotification']);
-    Route::get('/get-notifications', [AuthController::class, 'getNotifications']);
-    Route::get('/get-Sellernotifications', [AuthController::class, 'getSellerNotifications']);
-    Route::post('/delete-notification', [AuthController::class, 'deleteNotification']);
-    Route::post('/get-token', [AuthController::class, 'getToken']);
-    Route::get('/remaining-allowance', [AuthController::class, 'remainingAllowance']);
-    Route::get('/remaining-allowances', [AuthController::class, 'remainingAllowances']);
-    Route::post('/filter', [AuthController::class, 'filter']);
-    Route::post('/get-Returndate', [AuthController::class, 'returnDate']);
-    Route::get('/daily-sums', [AuthController::class, 'dailySums']);
-    Route::get('/return-date', [AuthController::class, 'returnDate']);
-    Route::post('/get-remainingAllowance', [AuthController::class, 'getRemainingAllowance']);
-
+    Route::post('/search-businesses', [sellerController::class, 'searchBusinesses']);  
+    Route::post('/make-exchange', [sellerController::class, 'exchange']);  
+    Route::post('/get-profile', [sellerController::class, 'getProfile']);  
+    Route::get('/scrap', [sellerController::class, 'scrap']);
+    Route::get('/draw-chart', [sellerController::class, 'getAvgRates']);
+    Route::post('/send-notification', [sellerController::class, 'sendNotification']);
+    Route::get('/get-notifications', [sellerController::class, 'getNotifications']);
+    Route::get('/get-buyers', [sellerController::class, 'getBuyers']);
+    Route::get('/get-Sellernotifications', [sellerController::class, 'getSellerNotifications']);
+    Route::post('/delete-notification', [sellerController::class, 'deleteNotification']);
+    Route::post('/get-token', [sellerController::class, 'getToken']);
+    Route::post('/filter', [sellerController::class, 'filter']);
 });
 
 Route::group([
     'middleware' => 'api',
-    'middleware' => 'auth.business'
+    'middleware' => 'auth.buyer'
 
 ], function ($router) {
-    Route::get('/get-chats', [AuthController::class, 'getChatsApi']);  
-    Route::post('/edit',[AuthController::class, 'editApi']);
+    Route::post('/add-picture', [buyerController::class, 'addPicture']);  
+    Route::post('/send-notification', [buyerController::class, 'sendNotification']);
+    Route::get('/get-notifications', [buyerController::class, 'getNotifications']);
+    Route::post('/delete-notification', [buyerController::class, 'deleteNotification']);
+    Route::post('/get-token', [buyerController::class, 'getToken']);
+    Route::get('/remaining-allowance', [buyerController::class, 'remainingAllowance']);
+    Route::post('/get-Returndate', [buyerController::class, 'returnDate']);
+    Route::get('/daily-sums', [buyerController::class, 'dailySums']);
+    Route::get('/return-date', [buyerController::class, 'returnDate']);
+    Route::get('/get-Userprofile', [buyerController::class, 'getUserprofile']);
 });
