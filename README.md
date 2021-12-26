@@ -45,7 +45,7 @@ Composer download
 
 Clone the repository:
 
-- git clone https://github.com/HaidarAliN/E-learning-Hub-server.git
+- git clone https://github.com/HananChehaitly/freshDigger-server.git
 
 In the command line, run:
 
