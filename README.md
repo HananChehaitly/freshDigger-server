@@ -13,13 +13,23 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 - ## Admin
 - Register Buyers 
-- Sets weekly buying limit for dollar buying businesses.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Sets weekly buying limit for dollar buying businesses
+- ## Buyer
+- Gets table of weekly exchanges
+- Gets remaining buying allowance
+- Gets notified when asked for a rate
+- Can reply with an offer for the exchange
+- Once buying limit is exceeded, can see the date on which they will be visible to sellers again
+- ## Seller
+- Gets Map of available buyers 
+- Can see on the map pin the name and remaining allowance of the buyer
+- Can see road directions to the buyer with Google Maps API
+- Can go to the profile of the buyer from the map
+- Can see the time to get to the destination
+- Can ping buyer for a dollar-LBP exchange rate
+- Can see the offers sorted plus pending ones
+- Can accept or decline offer
+- Has to confirm amount in case they accept
 
 ## Tech
 
