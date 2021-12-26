@@ -37,7 +37,7 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 - JWT: For authentication using JSON Web Tokens
 - Google Maps API: Used for road directions and estimation of time to destination
 - Expo-notifications: Used for push notifications
--React Native: The frontend of the website.
+- React Native: The frontend of the website.
 
 ## Installation
 Install composer on your machine using the following link:
@@ -45,33 +45,33 @@ Composer download
 
 Clone the repository:
 
--git clone https://github.com/HaidarAliN/E-learning-Hub-server.git
+- git clone https://github.com/HaidarAliN/E-learning-Hub-server.git
 
 In the command line, run:
 
--cd freshDigger-server
+- cd freshDigger-server
 
--composer update
+- composer update
 
 Copy the example env file and make the required configuration changes in the .env file
 
--cp .env.example .env
+- cp .env.example .env
 
 Generate a new application key
 
--php artisan key:generate
+- php artisan key:generate
 
 Generate a new JWT authentication secret key
 
--php artisan jwt:generate
+- php artisan jwt:generate
 
 Run the database migrations (Set the database connection in .env before migrating)
 
--php artisan migrate
+- php artisan migrate
 
 Start the local development server
 
--php artisan serve
+- php artisan serve
 
 ## Database seeding
 
@@ -79,8 +79,8 @@ Populate the database with seed data with relationships which includes users, co
 
 Run the database seeder and you're done
 
--php artisan db:seed
+- php artisan db:seed
 
 Note: It's recommended to have a clean database before seeding. You can refresh your migrations at any point to clean the database by running the following command
 
--php artisan migrate:refresh
+- php artisan migrate:refresh
