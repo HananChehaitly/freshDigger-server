@@ -33,42 +33,54 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 ## Tech
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- Laravel: A web application framework with expressive, elegant syntax.
+- JWT: For authentication using JSON Web Tokens
+- Google Maps API: Used for road directions and estimation of time to destination
+- Expo-notifications: Used for push notifications
+-React Native: The frontend of the website.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Installation
+Install composer on your machine using the following link:
+Composer download
 
-## Laravel Sponsors
+Clone the repository:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+-git clone https://github.com/HaidarAliN/E-learning-Hub-server.git
 
-### Premium Partners
+In the command line, run:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[CMS Max](https://www.cmsmax.com/)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
+-cd freshDigger-server
 
-## Contributing
+-composer update
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Copy the example env file and make the required configuration changes in the .env file
 
-## Code of Conduct
+-cp .env.example .env
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Generate a new application key
 
-## Security Vulnerabilities
+-php artisan key:generate
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Generate a new JWT authentication secret key
 
-## License
+-php artisan jwt:generate
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Run the database migrations (Set the database connection in .env before migrating)
+
+-php artisan migrate
+
+Start the local development server
+
+-php artisan serve
+
+## Database seeding
+
+Populate the database with seed data with relationships which includes users, courses, uploaded materials, quizzes, questions, and submissions. This can help you to quickly start testing the API or couple a frontend and start using it with ready content.
+
+Run the database seeder and you're done
+
+-php artisan db:seed
+
+Note: It's recommended to have a clean database before seeding. You can refresh your migrations at any point to clean the database by running the following command
+
+-php artisan migrate:refresh
